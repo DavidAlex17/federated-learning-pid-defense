@@ -1,0 +1,9 @@
+# Project-wide defaults
+data_dir: data
+results_dir: experiments/results
+plots_dir: experiments/plots
+
+# Baseline run defaults
+clients: 10
+rounds: 5
+seed: 42
