@@ -1,5 +1,19 @@
 {
   "name": "FL + PID Research",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "postCreateCommand": "bash -lc 'python -m pip install --upgrade pip && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi || true'"
+  "postCreateCommand": "bash -lc 'python -m pip install --upgrade pip && if [ -f requirements.txt ]; then pip install -r requirements.txt; fi || true'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.autoImportCompletions": true
+      }
+    }
+  }
 }
+
