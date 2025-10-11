@@ -1,0 +1,9 @@
+{
+  // Show dot-folders we care about
+  "files.exclude": {
+    "**/.devcontainer": false,
+    "**/.cfg": false
+  },
+  // Don’t hide files just because they’re in .gitignore
+  "explorer.excludeGitIgnore": false
+}
