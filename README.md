@@ -122,6 +122,19 @@ make plots
 
 ---
 
+## 📄 Documents & SharePoint Links
+
+All written deliverables are maintained in SharePoint instead of this repository.  
+Use the links below to access the latest versions of each document:
+
+- [Phase 0 – Proposal Draft](https://utrgv-my.sharepoint.com/:w:/r/personal/david_sanchez15_utrgv_edu/_layouts/15/Doc.aspx?sourcedoc=%7B3A064FC5-FE71-444E-9A1A-8808A8653C06%7D&
+
+file=CSCI4341%20Project%20Proposal%20Draft.docx&action=default&mobileredirect=true)
+- [Progress Report 1](https://utrgv-my.sharepoint.com/:w:/g/personal/david_sanchez15_utrgv_edu/EY7EzboliIlMo1sxI2Nu-7MBzzuZG3rIZXGCj8G6Oijv8A?e=8NuHhH)
+
+---
+
+
 ## License
 
 For academic use — CSCI 4341 Foundations of Intelligent Security Systems (Fall 2025).
