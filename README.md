@@ -3,12 +3,38 @@
 This repository contains our research implementation for **Federated Learning (FL)** under **data poisoning attacks**, using a **PID-based defense mechanism** within the **IntelliMAD** framework.  
 The experiments are run on the **FEMNIST dataset**, evaluating the defense performance compared to a baseline (FedAvg).
 
+## Big-picture overview
+
+- Orchestration: `framework/` will hold client–server logic (IntelliMAD/Flower). The PID defense integrates into `framework/server.py` aggregation.
+- Model: `model/cnn_model.py` defines the CNN used in experiments.
+- Experiments: `experiments/` contains runnable scripts and plotting utilities; results go to `experiments/results/`, plots to `experiments/plots/`.
+- Configuration: `cfg/project.yaml` sets defaults (clients, rounds, paths). `cfg/load_config.py` loads YAML and resolves paths to absolute locations.
+- References: `references/` contains summaries and PDFs for IntelliMAD and the NeurIPS PID paper guiding design.
+
+## FL flow with PID aggregation
+
+```mermaid
+flowchart LR
+      subgraph Clients
+         A1[Client 1] -->|local train| U1[Update 1]
+         A2[Client 2] -->|local train| U2[Update 2]
+         A3[Client N] -->|local train| UN[Update N]
+      end
+
+      U1 & U2 & UN --> S[Server]
+      S --> P[PID defense layer\n(score/filter updates)]
+      P --> W[Weighted aggregation\n(e.g., FedAvg with PID weights)]
+      W --> G[Global model]
+      G -->|broadcast| A1
+      G -->|broadcast| A2
+      G -->|broadcast| A3
+```
+
 ---
 
 ## Project Structure
 
 ```
-
 federated-learning-pid-defense/
 ├── cfg/                    # Configuration files and loaders
 │   ├── project.yaml        # Project-wide configuration (paths, params)
@@ -16,9 +42,6 @@ federated-learning-pid-defense/
 │
 ├── data/                   # Data folder (preprocessed FEMNIST clients)
 │   └── **init**.py
-│
-├── docs/progress_report_1/ # Draft + outline for Progress Report 1
-│   └── draft_outline.md
 │
 ├── experiments/
 │   ├── dry_run/            # Initial baseline (no-attack) experiments
@@ -40,7 +63,29 @@ federated-learning-pid-defense/
 ├── .vscode/                # Editor settings
 └── README.md
 
-````
+```
+
+## Configuration conventions
+
+- Always load settings with `cfg.load_config.load()`; it resolves `data_dir`, `results_dir`, and `plots_dir` to absolute paths.
+- Prefer reading defaults (e.g., `clients`, `rounds`) from `cfg/project.yaml` rather than hardcoding.
+- Before writing outputs, ensure the directory exists with `os.makedirs(..., exist_ok=True)`.
+
+Example (pattern used by `experiments/dry_run/dry_run_baseline.py`):
+
+```python
+from cfg.load_config import load as load_cfg
+import os, csv
+
+CFG = load_cfg()  # {'data_dir': '/abs/...', 'results_dir': '/abs/...', ...}
+out_path = os.path.join(CFG['results_dir'], 'baseline.csv')
+os.makedirs(os.path.dirname(out_path), exist_ok=True)
+
+with open(out_path, 'w', newline='') as f:
+   w = csv.writer(f)
+   w.writerow(['round', 'avg_acc', 'avg_loss'])
+   # write rows...
+```
 
 ---
 
@@ -91,6 +136,7 @@ Once finished, the environment is fully ready — you can run:
 ```bash
 make dry-run
 make plots
+```
 
 ---
 
@@ -113,12 +159,23 @@ make plots
 
 ---
 
-## Next Steps
+## Roadmap
 
-* [ ] Integrate PID defense layer
-* [ ] Add attack simulation scripts
-* [ ] Compare PID vs baseline (FedAvg)
-* [ ] Expand report for Progress Report 2
+* [ ] Implement PID defense layer in `framework/server.py` (scoring/thresholding + weighting)
+* [ ] Add small FL driver + attack simulation (few clients, few rounds) for quick iteration
+* [ ] Evaluate PID vs FedAvg baseline on FEMNIST subsets; log CSVs under `experiments/results/`
+* [ ] Plot comparative metrics and save to `experiments/plots/`
+* [ ] Document parameters in `cfg/project.yaml` and expose CLI overrides in experiment scripts
+* [ ] Prepare report figures/tables (link to plots/CSVs)
+
+---
+
+## References that inform design
+
+- IntelliMAD: `references/IntelliMAD_*`, `references/IntelliMAD.pdf`
+- PID defense (NeurIPS): `references/NeurIPS_PID_paper_*`, `references/NeurIPS_PID_paper.pdf`
+- Project scope/summary: `references/Instructor_Research_FL_Project_Summary.md`
+- Course deliverables/spec: `references/*Course_Project_Specification*`
 
 ---
 
@@ -127,10 +184,9 @@ make plots
 All written deliverables are maintained in SharePoint instead of this repository.  
 Use the links below to access the latest versions of each document:
 
-- [Phase 0 – Proposal Draft](https://utrgv-my.sharepoint.com/:w:/r/personal/david_sanchez15_utrgv_edu/_layouts/15/Doc.aspx?sourcedoc=%7B3A064FC5-FE71-444E-9A1A-8808A8653C06%7D&
-
-file=CSCI4341%20Project%20Proposal%20Draft.docx&action=default&mobileredirect=true)
-- [Progress Report 1](https://utrgv-my.sharepoint.com/:w:/g/personal/david_sanchez15_utrgv_edu/EY7EzboliIlMo1sxI2Nu-7MBzzuZG3rIZXGCj8G6Oijv8A?e=8NuHhH)
+- [Phase 0 – Proposal Draft](https://www.overleaf.com/project/68d1fc646c93a0c0a02abb8a)
+- [Progress Report 1](https://www.overleaf.com/project/68ed8a6891b863897e14f920)
+- [Progress Report 2]()
 
 ---
 
