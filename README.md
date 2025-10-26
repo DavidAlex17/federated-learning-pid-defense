@@ -22,8 +22,8 @@ flowchart LR
       end
 
       U1 & U2 & UN --> S[Server]
-      S --> P[PID defense layer\n(score/filter updates)]
-      P --> W[Weighted aggregation\n(e.g., FedAvg with PID weights)]
+   S --> P[PID defense layer<br/>(score/filter updates)]
+   P --> W[Weighted aggregation<br/>(e.g., FedAvg with PID weights)]
       W --> G[Global model]
       G -->|broadcast| A1
       G -->|broadcast| A2
