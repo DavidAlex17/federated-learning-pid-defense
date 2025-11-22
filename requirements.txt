@@ -4,4 +4,7 @@ torch
 torchvision
 matplotlib
 scikit-learn
-flwr
+scipy
+flwr[simulation]
+flwr-datasets
+pyyaml

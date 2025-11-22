@@ -11,6 +11,7 @@ Short, actionable guidance for AI coding agents working in this repository. Focu
 ## Key integration points (where to edit)
 
 - To add or change a defense/attack, modify `framework/server.py` (aggregation logic) and `framework/client.py` (local training/poison injection). The README notes the PID defense should be integrated as a layer in the aggregation pipeline.
+- Byzantine fault tolerance strategies are documented in `references/Byzantine_Fault_Tolerance_Guide.md` with implementation patterns for Trust-based, Krum, Bulyan, PID-based, and RFA defenses. These integrate into `framework/server.py` as multi-layer defense mechanisms.
 - Model changes go into `model/cnn_model.py`.
 - Experiment parameters and paths are controlled by `cfg/project.yaml` and consumed by `cfg/load_config.py` (which resolves relative paths to absolute ones). Update `project.yaml` when adding new default values.
 - Small scripts such as `experiments/dry_run/dry_run_baseline.py` are canonical examples — they parse args, call `load()`, ensure output dirs exist, and write CSVs (see `os.makedirs(...)` usage).
@@ -65,6 +66,7 @@ Notes: the repo includes a `.devcontainer/` to standardize Python (3.11) and dep
 
 - `references/IntelliMAD_*` and `references/IntelliMAD.pdf` — summaries and paper notes on IntelliMAD/Flower FL orchestration; useful when wiring server–client aggregation and scheduling.
 - `references/NeurIPS_PID_paper_*` and `references/NeurIPS_PID_paper.pdf` — primary background for the PID defense; consult when defining the defense signals and where to place the PID layer in `framework/server.py`.
+- `references/Byzantine_Fault_Tolerance_Guide.md` — comprehensive guide for integrating Trust-based, Krum, Bulyan, PID-based, and RFA Byzantine defenses into the aggregation pipeline.
 - `references/Instructor_Research_FL_Project_Summary.md` — internal scope and objectives overview.
 - `references/*Course_Project_Specification*` — course requirements/deliverables to keep scripts and outputs aligned.
 

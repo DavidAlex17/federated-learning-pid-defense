@@ -1,7 +1,7 @@
 # Federated Learning PID Defense
 
-This repository contains our research implementation for **Federated Learning (FL)** under **data poisoning attacks**, using a **PID-based defense mechanism** within the **IntelliMAD** framework.  
-The experiments are run on the **FEMNIST dataset**, evaluating the defense performance compared to a baseline (FedAvg).
+This repository contains our research implementation for **Federated Learning (FL)** on the **FEMNIST dataset**, with support for **data poisoning attacks** and future **PID-based defenses**.  
+The current milestone focuses on a conventional FedAvg baseline (no defense) and evaluating how label-flip poisoning degrades performance.
 
 ## Big-picture overview
 
@@ -40,13 +40,13 @@ federated-learning-pid-defense/
 │   ├── project.yaml        # Project-wide configuration (paths, params)
 │   └── load_config.py      # Utility for loading YAML settings
 │
-├── data/                   # Data folder (preprocessed FEMNIST clients)
-│   └── **init**.py
+├── data/                   # FEMNIST data loaders
+│   ├── femnist_loader.py           # Full FEMNIST loader (full experiments)
+│   └── femnist_subset_loader.py    # Subset FEMNIST loader (fast dev/debug)
 │
 ├── experiments/
-│   ├── dry_run/            # Initial baseline (no-attack) experiments
-│   │   ├── dry_run_baseline.py
-│   │   └── plot_metrics.py
+│   ├── baseline_fl.py      # Main FL experiment (FedAvg baseline + attack toggle)
+│   ├── plot_metrics.py     # Plotting utilities (per-client and average metrics)
 │   ├── plots/              # Generated plots (accuracy/loss)
 │   └── results/            # Stored results (CSV logs)
 │
@@ -96,23 +96,36 @@ with open(out_path, 'w', newline='') as f:
 pip install -r requirements.txt
 ```
 
-### 2. Run Dry-Run Baseline
+### 2. Reproduce Milestone 2 Baseline (No Attack)
 
 ```bash
-make dry-run
+PYTHONPATH=. python experiments/baseline_fl.py \
+   --clients 10 --rounds 5 \
+   --out experiments/results/baseline_noattack.csv
+
+PYTHONPATH=. python experiments/plot_metrics.py \
+   --in experiments/results/baseline_noattack.csv \
+   --out experiments/plots/noattack_full
 ```
 
-### 3. Generate Metrics Plots
+### 3. Reproduce Milestone 2 with Data Poisoning (Label-Flip Attack)
 
 ```bash
-make plots
+PYTHONPATH=. python experiments/baseline_fl.py \
+   --clients 10 --rounds 5 \
+   --attack --malicious 2 --poison-rate 0.5 \
+   --out experiments/results/baseline_attack.csv
+
+PYTHONPATH=. python experiments/plot_metrics.py \
+   --in experiments/results/baseline_attack.csv \
+   --out experiments/plots/attack_full
 ```
 
 **Results are saved under:**
 
-* `experiments/results/baseline.csv`
-* `experiments/plots/acc.png`
-* `experiments/plots/loss.png`
+* CSV logs: `experiments/results/baseline_noattack.csv`, `experiments/results/baseline_attack.csv`
+* Plots (no attack): `experiments/plots/noattack_full/*.png`
+* Plots (attack): `experiments/plots/attack_full/*.png`
 
 ---
 
@@ -161,6 +174,15 @@ make plots
 
 ## Roadmap
 
+### Milestone 2: Conventional FL Baseline (Current)
+* [ ] Implement baseline FedAvg aggregation in `framework/server.py` 
+* [ ] Add FEMNIST data partitioning and client simulation (≥10 clients)
+* [ ] Collect per-round metrics (per-client loss/accuracy, averages) to CSVs
+* [ ] Generate 8 plots: 4 no-attack + 4 with data poisoning attack
+* [ ] Evaluate baseline behavior: accuracy ↑, loss ↓ over rounds
+* [ ] Compare no-attack vs attack scenarios to show poisoning impact
+
+### Future Milestones
 * [ ] Implement PID defense layer in `framework/server.py` (scoring/thresholding + weighting)
 * [ ] Add small FL driver + attack simulation (few clients, few rounds) for quick iteration
 * [ ] Evaluate PID vs FedAvg baseline on FEMNIST subsets; log CSVs under `experiments/results/`
@@ -174,6 +196,7 @@ make plots
 
 - IntelliMAD: `references/IntelliMAD_*`, `references/IntelliMAD.pdf`
 - PID defense (NeurIPS): `references/NeurIPS_PID_paper_*`, `references/NeurIPS_PID_paper.pdf`
+- Byzantine fault tolerance strategies: `references/Byzantine_Fault_Tolerance_Guide.md`
 - Project scope/summary: `references/Instructor_Research_FL_Project_Summary.md`
 - Course deliverables/spec: `references/*Course_Project_Specification*`
 
